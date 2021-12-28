@@ -48,7 +48,7 @@ for (const token of auth.Tokens) {
 
     // Detected captcha
     client.on('message', msg => {
-        if (msg.author.id === '762992235385716756' || msg.author.id === config.authorId) {
+        if (msg.author.id === `${config.owoId}` || msg.author.id === `${config.authorId}`) {
             if (msg.content.toLowerCase().match(/human|captcha|dm|verify/g)) {
                 if (_allserver.includes(msg.guild.id) || msg.channel.type == 'dm') {
                     _aman = false
