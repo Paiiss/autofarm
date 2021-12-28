@@ -1,0 +1,25 @@
+{
+  "name": "self",
+  "version": "1.0.0",
+  "description": "Owo farming bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Paiiss",
+  "license": "ISC",
+  "dependencies": {
+    "cat-facts": "^1.0.2",
+    "chance": "^1.1.8",
+    "discord.js": "^12.6.4",
+    "discord.js-self": "^12.0.4",
+    "discord.js-selfbot": "^12.0.2",
+    "dog-facts": "^1.0.3",
+    "dotenv": "^10.0.0",
+    "hastebin-gen": "^2.0.5",
+    "moment": "^2.29.1",
+    "moment-duration-format": "^2.3.2",
+    "node-cron": "^3.0.0",
+    "superagent": "^6.1.0"
+  }
+}
