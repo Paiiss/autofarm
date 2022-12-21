@@ -34,13 +34,13 @@ for (const token of TOKEN) {
 
     // To log in first, is there a simpler way?
     async function login() {
-        // await client.login(token.split('xxxxx')[0]);
+        await client.login(token.split('xxxxx')[0]);
     }
     login()
 
     client.on('ready', async () => {
         console.log(`(${client.user.tag}) ready for auto farming`);
-        client.user.setActivity({ name: "auto farming owo", type: 'PLAYING' })
+        // client.user.setActivity({ name: "auto farming owo", type: 'PLAYING' })
     })
 
     client.on('messageCreate', async (msg) => {
@@ -69,7 +69,7 @@ for (const token of TOKEN) {
         // Message from Owo
         if (msg.author.id == owoId && msg.channel.type == 'DM') {
             let getId = client.users.cache.get(config.authorId)
-            return getId.send(`**[OWO SAY]** ${msg.content}`)
+            return getId.send(`**[OWO SAY]** ${msg.content}`).catch((e) => console.log('Unable to send chat to guys'))
         }
 
         if (msg.content.match(new RegExp(`!${client.user.username}`))) {
@@ -85,7 +85,7 @@ for (const token of TOKEN) {
     sendOwo('owob')
 
     // Owo coin flip
-    sendOwo(`owocf 5`, 300000)
+    sendOwo(`owocf`, 300000)
 
     // Owo pray
     sendOwo('owopray', 300000)
