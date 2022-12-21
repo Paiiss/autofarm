@@ -1,25 +1,34 @@
 {
-  "name": "self",
-  "version": "1.0.0",
-  "description": "Owo farming bot",
+  "name": "autofarm",
+  "version": "2.0.0",
+  "description": "Self bot to do farming automatically",
   "main": "index.js",
   "scripts": {
+    "start": "node .",
+    "dev": "npx nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "homepage": "https://github.com/Paiiss/autofarm/#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paiissautofarm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Paiiss/autofarm/issues"
+  },
+  "keywords": [
+    "bot owo",
+    "owo farming",
+    "owo",
+    "farming",
+    "discord",
+    "hunting",
+    "battle"
+  ],
   "author": "Paiiss",
-  "license": "ISC",
+  "license": "Apache License 2.0",
   "dependencies": {
-    "cat-facts": "^1.0.2",
-    "chance": "^1.1.8",
-    "discord.js": "^12.6.4",
-    "discord.js-self": "^12.0.4",
-    "discord.js-selfbot": "^12.0.2",
-    "dog-facts": "^1.0.3",
-    "dotenv": "^10.0.0",
-    "hastebin-gen": "^2.0.5",
-    "moment": "^2.29.1",
-    "moment-duration-format": "^2.3.2",
-    "node-cron": "^3.0.0",
-    "superagent": "^6.1.0"
+    "discord.js-selfbot-v13": "^2.9.16",
+    "dotenv": "^10.0.0"
   }
 }

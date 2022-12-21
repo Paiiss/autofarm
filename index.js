@@ -1,116 +1,83 @@
-console.log("[Logger] Start bot, wait a minute ...")
-const { Client, Intents, MessageEmbed } = require('discord.js-self');
-const Discord = require('discord.js');
-const fs = require('fs');
 require('dotenv').config()
-
-// Settings
+const { Client } = require('discord.js-selfbot-v13');
 const config = require('./config.json')
-let _aman = true
-const auth = require('./token.js')
 
-// Waktu spam
-var owoh = 30 * 1000 // spam owo hunt
-var owocash = 120 * 1000 // spam owo cash
-var spamgaje = 180 * 1000 // spam asal
-var owozoo = 300 * 1000 // spam owo zoo
-var owoo = 65 * 1000 // Spam owo 
-var owob = 15 * 1000 // Owo battel
+// Config
+const TOKEN = JSON.parse(process.env.TOKEN)
+const reportChannelId = config.reportChannelId || config.channelId
+const authorId = config.id, owoId = config.owoId
 
-// Server data
-let _serverJSON = JSON.parse(fs.readFileSync('./db/server.json'))
-let _server = _serverJSON[Math.floor(Math.random() * _serverJSON.length)];
+// Anticipate that the commands are not running at the same time
+const random = (number = 10) => {
+    return Math.floor(Math.random() * number)
+}
 
+for (const token of TOKEN) {
+    let statusBot = true
+    let channelId = token.split('#')[1] || config.channelId // (Default channel for send owo)
 
-for (const token of auth.Tokens) {
-
-    // Create a new client instance
-    const client = new Client({
-        intents: 32767,
-        partials: ['MESSAGE', 'CHANNEL', 'USER', 'REACTION'],
-    });
-
-    client.login(token);
-
-    // When the client is ready, run this code (only once)
-    client.once('ready', () => {
-        console.log('-------------------------------');
-        console.log('Client 1 Active !');
-        console.log(client.user.tag);
-        console.log('-------------------------------');
-    });
-
-    // Get all id server
-    let _allserver = [];
-    for (let i = 0; i < _serverJSON.length; i++) {
-        _allserver.push(_serverJSON[i].guildId)
+    // sendOwo function along with random extra time so it is not detected (trial)
+    const sendOwo = (text, time = 15000) => {
+        setTimeout(async () => {
+            if (!statusBot) return sendOwo(text, time)
+            console.log(`Send ${text}`)
+            let channel = client.channels.cache.get(channelId);
+            await channel.send(text)
+            sendOwo(text, time)
+        }, time + (random(9) * 1000))
     }
 
-    // Detected captcha
-    client.on('message', msg => {
-        if (msg.author.id === `${config.owoId}` || msg.author.id === `${config.authorId}`) {
-            if (msg.content.toLowerCase().match(/human|captcha|dm|verify/g)) {
-                if (_allserver.includes(msg.guild.id) || msg.channel.type == 'dm') {
-                    _aman = false
-                    let _paisse = client.users.cache.get(`${config.authorId}`)
-                    _paisse.send('[DANGER] Terdeteksi kata kata meminta captcha!')
-                    _paisse.send(`[Text] ${msg.content}`)
-                    _paisse.send(`[Server] **${msg.guild.name} | ${msg.guild.id}**`)
-                    console.log(`===> ${msg.content}`)
+    const client = new Client({
+        checkUpdate: false,
+    })
+
+    client.on('ready', async () => {
+        console.log(`(${client.user.tag}) ready for auto farming`);
+    })
+
+    client.on('messageCreate', async (msg) => {
+        if (msg.author.id === String(owoId) || msg.author.id === String(config.authorId)) {
+            if (msg.content.toLowerCase().match(/human|captcha|dm|banned|https:\/\/owobot.com\/captcha|Beep|human\?/g) || msg.channel.type == 'dm') {
+                if (msg.content.match(new RegExp(`${client.user.username}`))) {
+                    statusBot = false
+                    let getChannel = await client.channels.cache.get(reportChannelId)
+                    let attachments = msg.attachments.map(e => e)
+                    if (attachments.length == 0) return getChannel.send(`**[MSG]** ${msg.content}\n ${msg.guild ? `**[Server]** : ${msg.guild.name} (${msg.channel.name})` : ''}`)
+                    return getChannel.send(`**[OwO]** ${msg.content}\nServer : [ ${msg.guild ? `**[Server]** : ${msg.guild.name} (${msg.channel.name})` : ''} ]\n**Link** : ${_dlink[0].url || 'Null'}\n<@${authorId}>`)
                 }
             }
         }
-        if (msg.content.match(/!aiueo/g)) {
-            _aman = true
-            msg.reply('Bot akan berjalan kembali');
-            console.log(msg)
+
+        if (msg.content.match(/👍|verified|Thank/g) && msg.author.id == `${owoId}` && msg.channel.type == 'dm') {
+            statusBot = true
+            console.log(`(${client.user.tag}) Continue bots`)
         }
-    });
 
-    // Random trus
-    setInterval(() => {
-        _server = _serverJSON[Math.floor(Math.random() * _serverJSON.length)];
-    }, 13000)
+        if (msg.content.match(/!say/g) && msg.author == config.id) {
+            msg.channel.send(msg.content.replace('!say ', ''))
+        }
 
-    // Spam owoh
-    setInterval(() => {
-        if (_aman == false) return
-        console.log(`[${client.user.tag}] send owoh to ${_server.name}`)
-        let guild = client.guilds.cache.get(_server.guildId);
-        let channel = guild.channels.cache.get(_server.channelId);
-        channel.send('owoh')
-    }, owoh)
+        // Message from Owo
+        if (msg.author.id == `${owoId}` && msg.channel.type == 'dm') {
+            let getId = await client.users.cache.get(config.authorId)
+            getId.send(`**[OWO SAY]** ${msg.content}`)
+        }
+    })
 
-    // Owob
-    setInterval(() => {
-        if (_aman == false) return
-        let guild = client.guilds.cache.get(_server.guildId);
-        let channel = guild.channels.cache.get(_server.channelId);
-        channel.send('owob')
-    }, owob)
+    // Owo hunting
+    sendOwo('owoh')
 
+    // Owo battle 
+    sendOwo('owob')
+
+    // Owo coin flip
+    sendOwo(`owocf 10`, 20000)
+
+    // Owo pray
+    sendOwo('owopray', 300000)
+
+    // Owo cash
+    sendOwo('owocash', 60000)
+
+    client.login(token.split('#')[0]);
 }
-
-// Anti crash
-process.on("unhandledRejection", (reason, p) => {
-    console.log("[antiCrash] : Unhandled Rejection/Catch");
-    console.log(reason, p);
-});
-
-// Anti crash
-process.on("uncaughtException", (err, origin) => {
-    console.log("[antiCrash] :: Uncaught Exception/Catch");
-    console.log(err, origin);
-});
-
-// Anti crash
-process.on("uncaughtExceptionMonitor", (err, origin) => {
-    console.log("[antiCrash] :: Uncaught Exception/Catch (MONITOR)");
-    console.log(err, origin);
-
-});
-// Anti crash
-process.on("multipleResolves", (type, promise, reason) => {
-    console.log("[antiCrash] :: Multiple Resolves");
-    console.log(type, promise, reason);
-});
