@@ -85,6 +85,14 @@
   3. Open the tool and search for secret, then fill in the key with "TOKEN", for value fill in the token with the format ["token1"] if more than 2 tokens fill in ["token1", "token2", "and other"]
   4. And run repl wait for the bot to run, congratulations your bot has run
 
+### Noted
+
+- For custom 1 selfbot 1 channel
+
+  ```
+  TOKEN=["TOKEN1xxxxxChannelId", "TOKEN2xxxxxChannelId"]
+  ```
+
 ## 💪 Contributing
 
 ---
